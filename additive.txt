@@ -1,0 +1,55 @@
+MODULE CalibData
+	PERS tooldata tWeldGun:=[TRUE,[[49.841566361,0,372.194826196],[0.981627183,0,0.190808995,0]],[2,[0,0,100],[0,1,0,0],0,0,0]];
+	TASK PERS wobjdata Workobject_1:=[FALSE,TRUE,"",[[1000,0,0],[1,0,0,0]],[[-27,4,18],[1,0,0,0]]];
+ENDMODULE
+
+MODULE T_ROB1_3DP
+ 
+PERS string st3DP_Version:="3DP version 7.0.8721.594";
+ 
+
+PROC main3DP()
+    t3DPActive:=tWeldGun;
+    wobj3DPActive:=Workobject_1;
+    nTotalTargets:= 22980;
+    nTotalLayers:= 62;
+    FilePath:="HOME:/3DP_EXPORT/Sphere/";
+    stFolderName:= "Sphere";
+    nModules:=23;
+ 
+    v3DPprocess:= v100;
+    z3DPprocess:= z5;
+    z3DPprocessOnOff:= fine;
+    v3DPvia:= v200;
+    z3DPvia:= z10;
+    bDynamicSpeed:=False;
+    nLayerHeight:=1;
+    nExtrusionWidth:=0.8;
+    nProcess:=5;
+    nProcessOnWaitTime:=0;
+    bIgnoreDispOff:=FALSE;
+ 
+    WaitSyncTask syncStartInit, taskAll\TimeOut:= 1;
+ 
+    execute3DP_print;
+ERROR
+    IF ERRNO = ERR_WAITSYNCTASK THEN
+        RestartDynload;
+        RETRY;
+    ENDIF
+ENDPROC
+ENDMODULE
+
+
+MODULE T_ROB1_MAIN_3DP
+
+    CONST jointtarget jHome:=[[0,0,0,0,30,0],[0,0,0,0,0,0]];
+    CONST robtarget pHome:=[[918.905581075,0.000000012,548.908364574],[0.015297704,0,0.999882983,0],[0,-1,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    
+    
+    PROC main()
+        MoveJ pHome,v1000,z100,tWeldGun\WObj:=wobj0;
+        %"main3DP"%;
+        MoveJ pHome,v1000,z100,tWeldGun\WObj:=wobj0;
+    ENDPROC
+ENDMODULE
